@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Signature Numérique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            text-align: center;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .popup-content {
+            text-align: center;
+        }
+        .qr-code {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Générateur de Signature Numérique</h2>
+        <form id="uploadForm" action="signature/generate_signature.php" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <br><br>
+            <button type="submit">Générer la Signature</button>
+        </form>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p id="signature"></p>
+            <div class="qr-code">
+                <img id="qrCode" src="" alt="QR Code">
+            </div>
+            <button onclick="closePopup()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(signature, qrCodePath) {
+            document.getElementById('signature').innerText = 'Signature: ' + signature;
+            document.getElementById('qrCode').src = 'file:///' + qrCodePath.replace(/\\/g, '/');
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', this.action, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.signature && response.qrCodePath) {
+                        showPopup(response.signature, response.qrCodePath);
+                    } else {
+                        alert('Erreur lors de la génération de la signature.');
+                    }
+                } else {
+                    alert('Erreur lors de la requête.');
+                }
+            };
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
