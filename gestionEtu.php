@@ -388,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
 
         .haut h2 {
             text-decoration: none;
-            color: wheat;
+            color: white;
             display: flex;
             align-items: center;
             margin: 10px 0;
