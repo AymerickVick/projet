@@ -60,8 +60,8 @@ function afficherMessage($message)
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: #fff;
+            background-color: white;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;

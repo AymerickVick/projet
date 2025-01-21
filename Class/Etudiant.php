@@ -1,10 +1,13 @@
 <?php
 require_once 'Database.php';
+require_once 'vendor/phpmailer/phpmailer/src/Exception.php';
+require_once 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 
 class Etudiant
@@ -104,7 +107,7 @@ class Etudiant
     // Méthode pour récupérer tous les étudiants
     public function getAllEtudiants()
     {
-        $query = "SELECT * FROM " . $this->table;
+        $query = "SELECT * FROM " . $this->table." ORDER BY nom ASC, prenom ASC";
         $result = $this->conn->query($query);
 
         if ($result === false) {

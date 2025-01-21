@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $success
         ? "Versement ajouté avec succès."
         : "Une erreur s'est produite lors de l'ajout du versement.";
-       
 
     // Mise à jour des montants dans la table `etudiants`
     $update_sql = "UPDATE etudiants 

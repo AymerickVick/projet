@@ -205,7 +205,7 @@ class GradeProcessor {
     }
 
     private function getOrientationText($nom, $prenom, $grades) {
-        $GKey = "AIzaSyDWuYR-M8EzvTE3OIz1iNlyjugCxf7IVJ0";
+        $GKey = "AIzaSyA7OteJoYw6GM-IM7bgRdT2nglSvo_HZn0";
 
         $notes_description = "";
         foreach ($grades as $matiere => $note) {

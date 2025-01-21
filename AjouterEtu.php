@@ -1,16 +1,13 @@
 <?php
 require_once 'Class/Database.php';
 require_once 'Class/Etudiant.php';
-require_once 'Class/B1.php';
-require_once 'Class/B2.php';
-require_once 'Class/B3.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $database = new Database();
         $db = $database->getConnection();
 
-        // Data validation and sanitization
+        // Récupération des données avec validation
         $nom = htmlspecialchars(trim($_POST['nom']));
         $prenom = htmlspecialchars(trim($_POST['prenom']));
         $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) ?: '';
@@ -29,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Email invalide.");
         }
 
-        // Photo upload handling
+        // Gestion de la photo
         $upload_dir = "uploads/";
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
@@ -42,24 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Erreur lors de l'upload de la photo.");
         }
 
-        // Student creation
+        // Création de l'étudiant
         $etudiant = new Etudiant($db);
-        $b1 = new B1($db);
-        $b2 = new B2($db);
-        $b3 = new B3($db);
-
-        $b1->matricule = $matricule;
-        $b1->nom = $nom;
-        $b1->prenom = $prenom;
-
-        $b2->matricule = $matricule;
-        $b2->nom = $nom;
-        $b2->prenom = $prenom;
-
-        $b3->matricule = $matricule;
-        $b3->nom = $nom;
-        $b3->prenom = $prenom;
-
         $etudiant->nom = $nom;
         $etudiant->prenom = $prenom;
         $etudiant->matricule = $matricule;
@@ -70,21 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $etudiant->nom_parent = $nom_parent;
         $etudiant->email_parent = $email_parent;
         $etudiant->age = $age;
-        $etudiant->montant_paye = $montant_paye;
+        $etudiant->montant_paye =$montant_paye;
         $etudiant->reste = $reste;
         $etudiant->statut = $statut;
         $etudiant->date_naissance = $date_naissance;
 
-        if ($niveau === "B1") {
-            $success = $b1->ajouterEtudiant() && $b1->ajouterEtudiantCC() && $b1->ajouterEtudiantTp();
-        } elseif ($niveau === "B2") {
-            $success = $b2->ajouterEtudiant() && $b2->ajouterEtudiantCC() && $b2->ajouterEtudiantTp();
-        } elseif ($niveau === "B3") {
-            $success = $b3->ajouterEtudiant() && $b3->ajouterEtudiantCC() && $b3->ajouterEtudiantTp();
-        }
 
-        // Add student and send matriculation number by email
-        $success = $etudiant->ajouterEtudiant() && $etudiant->ajouterEtudiantCon("Etudiant", $matricule, $matricule);
+        // Ajout de l'étudiant et envoi du matricule par email
+        $success = $etudiant->ajouterEtudiant() && $etudiant->ajouterEtudiantCon();
         if ($success) {
             $repond = $etudiant->envoyerMatriculeParEmail($matricule, $email, $nom);
             $message = $repond
@@ -104,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
         $database = new Database();
         $db = $database->getConnection();
 
-        // Get the number of students in the level
+        // Récupération du nombre d'étudiants dans le niveau
         $query = "SELECT COUNT(*) AS count FROM etudiants WHERE niveau = ?";
         $stmt = $db->prepare($query);
         $stmt->bind_param("s", $niveau);
@@ -113,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
         $row = $result->fetch_assoc();
         $count = $row['count'] + 1;
 
-        // Generate matriculation number
+        // Génération du matricule
         $currentYear = date("Y");
         $matricule = $currentYear . $niveau . str_pad($count, 3, "0", STR_PAD_LEFT);
 
@@ -127,54 +101,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajout d'un étudiant</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-        }
-
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background: linear-gradient(135deg, #56ccf2, #2f80ed);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
         }
 
         .container {
             background: #fff;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             max-width: 900px;
             width: 100%;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
-            color: var(--secondary-color);
+            margin-bottom: 20px;
+            color: #333;
         }
 
         .form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
 
@@ -186,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
         label {
             font-weight: 500;
             margin-bottom: 5px;
-            color: var(--secondary-color);
+            color: #555;
         }
 
         input,
@@ -198,43 +162,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
             transition: all 0.3s ease;
         }
 
+        input:hover {
+            transform: translateY(-10%);
+            transition: ease-in-out .5s;
+            box-shadow: 0 10px 30px rgba(102, 166, 255, 0.5);
+        }
+
+        select:hover {
+            transform: translateY(-10%);
+            transition: ease-in-out .5s;
+            box-shadow: 0 10px 30px rgba(102, 166, 255, 0.5);
+        }
+
         input:focus,
         select:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+            border-color: #2f80ed;
+            box-shadow: 0 0 5px rgba(47, 128, 237, 0.5);
         }
 
         .form-actions {
-            grid-column: 1 / -1;
+            grid-column: span 3;
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+            justify-content: right;
+
         }
 
         button {
             padding: 12px 20px;
             font-size: 16px;
-            background: var(--primary-color);
+            background: #2f80ed;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin: 10px;
+            /* justify-content: right; */
         }
 
         button:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
+            background: #1b5cb7;
+            transform: translateY(-10%);
+            transition: ease-in-out .5s;
+            box-shadow: 0 10px 30px rgba(102, 166, 255, 0.5);
         }
 
         .form-actions a button {
-            background-color: var(--accent-color);
+            background-color: wheat;
+            color: black;
         }
 
         .form-actions a button:hover {
-            background: #c0392b;
+            background: red;
+
+        }
+
+        @media (max-width: 600px) {
+            .form {
+                grid-template-columns: 1fr;
+            }
         }
 
         .popup-overlay {
@@ -252,17 +239,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
 
         .popup-content {
             background: #fff;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
             max-width: 400px;
             width: 90%;
         }
 
         .popup-content h3 {
-            margin: 0 0 20px;
-            color: var(--secondary-color);
+            margin: 0 0 10px;
         }
 
         .popup-actions button {
@@ -271,99 +257,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            background: var(--primary-color);
+            margin: 0 5px;
+        }
+
+        .popup-actions .close {
+            background: #2196F3;
             color: #fff;
-            transition: all 0.3s ease;
         }
 
-        .popup-actions button:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 600px) {
-            .form {
-                grid-template-columns: 1fr;
-            }
+        .popup-actions .close:hover {
+            background: #1769aa;
         }
     </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1><i class="fas fa-user-plus"></i> Ajouter un étudiant</h1>
-        <form action="AjouterEtu.php" method="POST" enctype="multipart/form-data" class="form">
-            <div class="form-group">
-                <label for="nom"><i class="fas fa-user"></i> Nom:</label>
-                <input type="text" id="nom" name="nom" required>
-            </div>
-            <div class="form-group">
-                <label for="prenom"><i class="fas fa-user"></i> Prénom:</label>
-                <input type="text" id="prenom" name="prenom" required>
-            </div>
-            <div class="form-group">
-                <label for="matricule"><i class="fas fa-id-card"></i> Matricule:</label>
-                <input type="text" id="matricule" name="matricule" readonly required>
-            </div>
-            <div class="form-group">
-                <label for="photo"><i class="fas fa-camera"></i> Photo:</label>
-                <input type="file" id="photo" name="photo" required>
-            </div>
-            <div class="form-group">
-                <label for="email"><i class="fas fa-envelope"></i> Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="niveau"><i class="fas fa-graduation-cap"></i> Niveau:</label>
-                <select id="niveau" name="niveau" required onchange="generateMatricule()">
-                    <option value="">-- Sélectionnez le niveau --</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
-                    <option value="B3">B3</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="date_naissance"><i class="fas fa-birthday-cake"></i> Date de Naissance:</label>
-                <input type="date" id="date_naissance" name="date_naissance" max="2011-12-31" required>
-            </div>
-            <div class="form-group">
-                <label for="montant"><i class="fas fa-money-bill-wave"></i> Montant à payer:</label>
-                <input type="number" id="montant" name="montant" readonly required>
-            </div>
-            <div class="form-group">
-                <label for="reste"><i class="fas fa-money-bill-wave"></i> Reste à payer:</label>
-                <input type="number" id="reste" name="reste" readonly required>
-            </div>
-            <div class="form-group">
-                <label for="nom_parent"><i class="fas fa-user-friends"></i> Nom du parent:</label>
-                <input type="text" id="nom_parent" name="nom_parent" required>
-            </div>
-            <div class="form-group">
-                <label for="email_parent"><i class="fas fa-envelope"></i> Email du parent:</label>
-                <input type="email" id="email_parent" name="email_parent" required>
-            </div>
-            <div class="form-group">
-                <label for="age"><i class="fas fa-birthday-cake"></i> Âge:</label>
-                <input type="number" id="age" name="age" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit"><i class="fas fa-save"></i> Ajouter l'étudiant</button>
-                <a href="gestionEtu.php"><button type="button"><i class="fas fa-times"></i> Annuler</button></a>
-            </div>
-        </form>
-    </div>
-
-    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-        <div id="popup" class="popup-overlay">
-            <div class="popup-content">
-                <h3><?= htmlspecialchars($message); ?></h3>
-                <div class="popup-actions">
-                    <button onclick="closePopup()"><i class="fas fa-times"></i> Fermer</button>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
     <script>
         function generateMatricule() {
             const niveau = document.getElementById('niveau').value;
@@ -375,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
                     })
                     .catch(error => console.error('Erreur:', error));
 
-                // Update amount based on level
+                // Mise à jour du montant en fonction du niveau
                 const montantInput = document.getElementById('montant');
                 const resteInput = document.getElementById('reste');
                 if (niveau === 'B1') {
@@ -386,13 +291,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['niveau'])) {
                     resteInput.value = 2000000;
                 } else if (niveau === 'B3') {
                     montantInput.value = 3000000;
-                    resteInput.value = 3000000;
+                    resteInput.value = 2000000;
                 }
             }
         }
+    </script>
+</head>
 
+<body>
+    <div class="container">
+        <h1>Ajouter un étudiant</h1>
+        <form action="AjouterEtu.php" method="POST" enctype="multipart/form-data" class="form">
+            <div class="form-group">
+                <label for="nom">Nom:</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="form-group">
+                <label for="prenom">Prénom:</label>
+                <input type="text" id="prenom" name="prenom" required>
+            </div>
+            <div class="form-group">
+                <label for="matricule">Matricule:</label>
+                <input type="text" id="matricule" name="matricule" readonly required style="background-color: #f9f9f9; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label for="photo">Photo:</label>
+                <input type="file" id="photo" name="photo" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="niveau">Niveau:</label>
+                <select id="niveau" name="niveau" required onchange="generateMatricule()">
+                    <option value="">-- Sélectionnez le niveau --</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="B3">B3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date_naissance">Date de Naissance:</label>
+                <input
+                    type="date"
+                    id="date_naissance"
+                    name="date_naissance"
+                    max="2011-12-31">
+            </div>
+            <div class="form-group">
+                <label for="montant">Montant à payer:</label>
+                <input type="number" id="montant" name="montant" readonly required style="background-color: #f9f9f9; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label for="reste">Reste à payer:</label>
+                <input type="number" id="reste" name="reste" readonly required style="background-color: #f9f9f9; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label for="nom_parent">Nom du parent:</label>
+                <input type="text" id="nom_parent" name="nom_parent" required>
+            </div>
+            <div class="form-group">
+                <label for="email_parent">Email du parent:</label>
+                <input type="email" id="email_parent" name="email_parent" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Âge:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Ajouter l'étudiant</button>
+                <a href="gestionEtu.php"><button>Annuler</button></a>
+            </div>
+
+
+
+        </form>
+    </div>
+
+    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+        <div id="popup" class="popup-overlay">
+            <div class="popup-content">
+                <h3><?= htmlspecialchars($message); ?></h3>
+                <div class="popup-actions">
+                    <button class="close" onclick="closePopup()">Fermer</button>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <script>
         function closePopup() {
-            document.getElementById('popup').style.display = 'none';
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
         }
     </script>
 </body>

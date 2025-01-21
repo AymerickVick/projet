@@ -141,7 +141,7 @@
                 <a href="gestionEnsei.php"><i class="fas fa-chalkboard-teacher"></i> Enseignants</a>
                 <a href="statistiques.php"><i class="fas fa-chart-bar"></i> Statistiques</a>
                 <a href="gestionMati.php"><i class="fas fa-book"></i> Matières</a>
-                <a href="listeNote.php" class="active"><i class="fas fa-star"></i> Notes</a>
+                <a href="rien1.php" class="active"><i class="fas fa-star"></i> Notes</a>
                 <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
             </nav>
         </aside>

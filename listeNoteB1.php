@@ -18,19 +18,19 @@ foreach ($classes as $classe) {
     $table_tp = "tp_" . strtolower($classe);
     $table_cc =  "note_".strtolower($classe);
 
-    $query_notes = "SELECT * FROM $table_notes";
+    $query_notes = "SELECT * FROM $table_notes"." ORDER BY nom ASC, prenom ASC";
     $result_notes = $db->query($query_notes);
     if ($result_notes) {
         $notes[$classe]['notes'] = $result_notes->fetch_all(MYSQLI_ASSOC);
     }
 
-    $query_tp = "SELECT * FROM $table_tp";
+    $query_tp = "SELECT * FROM $table_tp"." ORDER BY nom ASC, prenom ASC";
     $result_tp = $db->query($query_tp);
     if ($result_tp) {
         $notes[$classe]['tp'] = $result_tp->fetch_all(MYSQLI_ASSOC);
     }
 
-    $query_exam = "SELECT * FROM $table_cc";
+    $query_exam = "SELECT * FROM $table_cc"." ORDER BY nom ASC, prenom ASC";
     $result_exam = $db->query($query_exam);
     if ($result_exam) {
         $notes[$classe]['cc'] = $result_exam->fetch_all(MYSQLI_ASSOC);
@@ -231,7 +231,7 @@ function calculateAverage($notes)
                 <div class="table-card">
                     <div class="table-container">
                         <h2>Notes des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
-                        <button class="send-notes-button" onclick="window.location.href='envoyer.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
+                        <button class="send-notes-button" onclick="window.location.href='envoyer_notes.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
                         <table>
                             <tr>
                                 <th>Matricule</th>

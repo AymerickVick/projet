@@ -87,7 +87,7 @@ class Enseignant
 
     public function getAllEtudiants()
     {
-        $query = "SELECT * FROM " . $this->table;
+        $query = "SELECT * FROM " . $this->table." ORDER BY nom ASC";
         $result = $this->conn->query($query);
 
         if ($result === false) {

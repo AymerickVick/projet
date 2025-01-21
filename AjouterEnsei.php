@@ -1,7 +1,5 @@
 <?php
 require('fpdf.php');
-require('Class/Etudiant.php');
-require('Class/Database.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -21,17 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $matricule = "ENS-" . date("YmdHis");
     $password = $matricule;
 
-    $database = new Database();
-    $db = $database->getConnection();
-    $etudiant = new Etudiant($db);
-
 
     // Enregistrement de la photo
     $photoPath = 'uploads/' . $matricule . '_' . basename($photo['name']);
     move_uploaded_file($photo['tmp_name'], $photoPath);
 
     // Connexion à la base de données
-    $mysqli = new mysqli('127.0.0.1', 'root', '', 'etudiants');
+    $mysqli = new mysqli('127.0.0.1', 'root', 'Keyce-2024', 'etudiants');
     if ($mysqli->connect_error) {
         die("Erreur de connexion : " . $mysqli->connect_error);
     }
@@ -39,13 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insertion dans la table
     $stmt = $mysqli->prepare("INSERT INTO enseignants (matricule, nom, prenom, photo, email, fonction) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $matricule, $nom, $prenom, $photoPath, $email, $fonction);
-    $stmt1 = $mysqli->prepare("INSERT INTO connexion_prof (matricule, password) VALUES (?, ?)");
-    $stmt1->bind_param("ss", $matricule, $matricule);
-    if ($stmt->execute() && $stmt1->execute()) {
+    if ($stmt->execute()) {
         // Générer la carte en PDF
-        $etudiant->ajouterEtudiantCon("Professeur",$matricule,$matricule);
         $message2 = generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $email);
-        $message = "Enseignant ajouté avec succès. " . $message2;
+        $message = "Enseignant ajouté avec succès. ".$message2;
     } else {
         echo "Erreur lors de l'ajout : " . $mysqli->error;
     }
@@ -89,7 +80,7 @@ function generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $
     $pdf->Output('F', $fileName);
 
     // Envoi par email
-    $message1 = sendEmailWithAttachment($email, $fileName);
+    $message1 =sendEmailWithAttachment($email, $fileName);
     return $message1;
 }
 
@@ -97,7 +88,7 @@ function generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $
 function sendEmailWithAttachment($email, $filePath)
 {
     // require 'PHPMailer/PHPMailerAutoload.php';
-
+    
     $mail = new PHPMailer();
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com'; // Remplacez par le serveur SMTP

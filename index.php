@@ -76,7 +76,7 @@ function afficherMessage($message)
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background:white;
             color: #fff;
             display: flex;
             justify-content: center;

@@ -10,20 +10,23 @@ $matiere = strval($_GET['matiere']);
 $matiere_cc = strval($_GET['matiere']) . "_cc";
 
 // Récupération des étudiants
-$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM exam_" . $niveau;
+$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM exam_" . $niveau." ORDER BY nom ASC, prenom ASC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $result = $stmt->get_result();
+$stmt->close();
 
-$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM note_" . $niveau;
+$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM note_" . $niveau." ORDER BY nom ASC, prenom ASC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $result1 = $stmt->get_result();
+$stmt->close();
 
-$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM tp_" . $niveau;
+$query = "SELECT id, nom, prenom, matricule, " . $matiere . " FROM tp_" . $niveau." ORDER BY nom ASC, prenom ASC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $result2 = $stmt->get_result();
+$stmt->close();
 
 $message = '';
 // Traitement du formulaire pour ajouter des notes
@@ -33,21 +36,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateQuery = "UPDATE exam_" . $niveau . " SET " . $matiere . " = ? WHERE matricule = ?";
         $updateStmt = $db->prepare($updateQuery);
         $updateStmt->bind_param("ds", $note, $id_etudiant);
-        $updateStmt->execute();
+        if (!$updateStmt->execute()) {
+            die("Erreur lors de la mise à jour des notes : " . $updateStmt->error);
+        }
+        $updateStmt->close();
     }
     foreach ($_POST['notes_cc'] as $id_etudiant => $note) {
         $note = floatval($note); // Convertir la note en float
         $updateQuery = "UPDATE note_" . $niveau . " SET " . $matiere . " = ? WHERE matricule = ?";
         $updateStmt = $db->prepare($updateQuery);
         $updateStmt->bind_param("ds", $note, $id_etudiant);
-        $updateStmt->execute();
+        if (!$updateStmt->execute()) {
+            die("Erreur lors de la mise à jour des notes CC : " . $updateStmt->error);
+        }
+        $updateStmt->close();
     }
     foreach ($_POST['notes_tp'] as $id_etudiant => $note) {
         $note = floatval($note); // Convertir la note en float
         $updateQuery = "UPDATE tp_" . $niveau . " SET " . $matiere . " = ? WHERE matricule = ?";
         $updateStmt = $db->prepare($updateQuery);
         $updateStmt->bind_param("ds", $note, $id_etudiant);
-        $updateStmt->execute();
+        if (!$updateStmt->execute()) {
+            die("Erreur lors de la mise à jour des notes TP : " . $updateStmt->error);
+        }
+        $updateStmt->close();
     }
     $message = "Notes enregistrées avec succès.";
 }
@@ -187,6 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                    step="0.01" min="0" max="20"
                                                    value="<?= htmlspecialchars($row1[$matiere]); ?>">
                                         </td>
+                                        <?php break; ?>
                                     <?php endif; ?>
                                 <?php endwhile; ?>
                                 <?php $result2->data_seek(0); ?>
@@ -198,6 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                    step="0.01" min="0" max="20"
                                                    value="<?= htmlspecialchars($row2[$matiere]); ?>">
                                         </td>
+                                        <?php break; ?>
                                     <?php endif; ?>
                                 <?php endwhile; ?>
                             </tr>
