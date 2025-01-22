@@ -34,9 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $mysqli->prepare("INSERT INTO enseignants (matricule, nom, prenom, photo, email, fonction) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $matricule, $nom, $prenom, $photoPath, $email, $fonction);
     if ($stmt->execute()) {
+        $stmt = $mysqli->prepare("INSERT INTO connexion (matricule, password, statut) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $matricule, $matricule,"Professeur");
+        $stmt->execute();
         // Générer la carte en PDF
         $message2 = generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $email);
-        $message = "Enseignant ajouté avec succès. ".$message2;
+        $message = "Enseignant ajouté avec succès. " . $message2;
     } else {
         echo "Erreur lors de l'ajout : " . $mysqli->error;
     }
@@ -80,7 +83,7 @@ function generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $
     $pdf->Output('F', $fileName);
 
     // Envoi par email
-    $message1 =sendEmailWithAttachment($email, $fileName);
+    $message1 = sendEmailWithAttachment($email, $fileName);
     return $message1;
 }
 
@@ -88,7 +91,7 @@ function generateTeacherCard($nom, $prenom, $matricule, $fonction, $photoPath, $
 function sendEmailWithAttachment($email, $filePath)
 {
     // require 'PHPMailer/PHPMailerAutoload.php';
-    
+
     $mail = new PHPMailer();
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com'; // Remplacez par le serveur SMTP

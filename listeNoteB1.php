@@ -101,30 +101,36 @@ function calculateAverage($notes)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Notes</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            min-height: 100vh;
-            background-color: #343a40;
-        }
-
+        /* Styles de la sidebar */
         .sidebar {
             background-color: #343a40;
             color: white;
-            width: 160px;
-            padding: 20px 10px;
+            height: 100vh;
+            width: 200px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 0;
-            bottom: 0;
-            height: 100vh;
-            border-radius: 10px;
+            left: 0;
+            border-radius: 0 10px 10px 0;
         }
 
         .sidebar h2 {
+            margin: 0 0 30px 0;
+            font-size: 1.5em;
             text-align: center;
-            margin-bottom: 20px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .sidebar a {
@@ -132,85 +138,92 @@ function calculateAverage($notes)
             color: white;
             display: flex;
             align-items: center;
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
             transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar a i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .sidebar a:hover {
-            background-color: #495057;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
-        }
-
-        .sidebar a img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+            background-color: #6c83f7;
+            transform: translateX(5px);
         }
 
         .sidebar .etu {
-            background-color: #495057;
+            background-color: #6c83f7;
         }
 
-        .main-content {
-            margin-left: 180px;
-            margin-top: 20px;
+        .logout-btn {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Styles du contenu principal */
+        .content {
+            margin-left: 220px;
             padding: 20px;
-            width: calc(100% - 180px);
-            text-align: center;
             background-color: #343a40;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: white;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
         }
 
-        .table-card {
-            margin-bottom: 30px;
+        .header {
+            background-color: #495057;
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
-        .table-card h2 {
-            color: #ffffff;
+        .header h2 {
+            margin-left: 10px;
+            color: white;
         }
 
-        .send-notes-button {
+        .header input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .header input::placeholder {
+            color: #aaa;
+        }
+
+        .header button {
             background-color: #007bff;
             color: white;
+            margin: 5px;
+            padding: 8px 12px;
             border: none;
-            padding: 10px 15px;
-            margin-bottom: 10px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
-        .send-notes-button:hover {
+        .header button:hover {
             background-color: #0056b3;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            background-color: #495057;
-            border-radius: 10px;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #2c3e50;
-            color: wheat;
-        }
-
-        th {
-            background-color: #2c3e50;
-            color: white;
         }
 
         .table-container {
@@ -219,114 +232,274 @@ function calculateAverage($notes)
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #2c3e50;
+            text-align: left;
+            color: wheat;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #495057;
+        }
+
+        tr:hover {
+            background-color: #6c83f7;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions button {
+            margin: 4px;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .actions .edit {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .actions .details {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .actions .delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .actions button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .ajout {
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            margin: 10px 0px;
+            padding: 9px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .ajout:hover {
+            background-color: #0056b3;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .popup-content h3 {
+            margin: 0 0 10px;
+        }
+
+        .popup-content p {
+            margin: 0 0 20px;
+        }
+
+        .popup-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .popup-actions .cancel {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .popup-actions .confirm {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .popup-actions .cancel:hover {
+            background: #c82333;
+        }
+
+        .popup-actions .confirm:hover {
+            background: #218838;
         }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Menu</h2>
-        <a href="gestionEtu.php"><img src="uploads/student.gif" alt="">Étudiants</a>
-        <a href="gestionVer.php"><img src="uploads/alms.gif" alt="">Versements</a>
-        <a href="gestionEnsei.php"><img src="uploads/graduated (1).png" alt="">Enseignant</a>
-        <a href="statistiques.php"><img src="uploads/analytics.gif" alt="">Statistiques</a>
-        <a href="gestionMati.php"><img src="uploads/analytics.gif" alt="">Matieres</a>
-        <a class="etu" href="rien1.php"><img src="uploads/graduated (1).png" alt="">Notes</a>
-        <a href="logout.php">Déconnexion</a>
+        <h2><i class='bx bxs-dashboard'></i> Menu</h2>
+        <a href="gestionEtu.php"><i class='bx bxs-user-detail'></i> Étudiants</a>
+        <a href="gestionVer.php"><i class='bx bx-money'></i> Versements</a>
+        <a href="gestionEnsei.php"><i class='bx bxs-user-badge'></i> Enseignants</a>
+        <a href="statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
+        <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
+        <a class="etu" href="rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
+        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
-    <main class="main-content">
 
+    <!-- Main Content -->
+    <div class="content">
         <?php foreach ($classes as $classe): ?>
             <?php if (isset($notes[$classe]) && !empty($notes[$classe])): ?>
-                <div class="table-card">
-                    <div class="table-container">
-                        <h2>Notes des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
-                        <button class="send-notes-button" onclick="window.location.href='envoyer_notes.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
-                        <table>
+                <div class="table-container">
+                    <h2>Notes des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
+                    <button class="ajout" onclick="window.location.href='envoyer_notes.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
+                    <table>
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <?php foreach (array_keys($notes[$classe]['notes'][0]) as $column): ?>
+                                <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
+                                    <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php foreach ($notes[$classe]['notes'] as $student): ?>
                             <tr>
-                                <th>Matricule</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <?php foreach (array_keys($notes[$classe]['notes'][0]) as $column): ?>
+                                <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
+                                <?php foreach ($student as $column => $value): ?>
                                     <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                        <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                        <td><?php echo htmlspecialchars($value ?? ''); ?></td>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </tr>
-                            <?php foreach ($notes[$classe]['notes'] as $student): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
-                                    <?php foreach ($student as $column => $value): ?>
-                                        <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                            <td><?php echo htmlspecialchars($value ?? ''); ?></td>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </table>
+                        <?php endforeach; ?>
+                    </table>
 
-                        <h2>Notes de CC des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
-                        <table>
+                    <h2>Notes de CC des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
+                    <table>
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <?php foreach (array_keys($notes[$classe]['cc'][0]) as $column): ?>
+                                <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
+                                    <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php foreach ($notes[$classe]['cc'] as $student): ?>
                             <tr>
-                                <th>Matricule</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <?php foreach (array_keys($notes[$classe]['cc'][0]) as $column): ?>
+                                <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
+                                <?php foreach ($student as $column => $value): ?>
                                     <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                        <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                        <td><?php echo htmlspecialchars($value ?? ''); ?></td>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </tr>
-                            <?php foreach ($notes[$classe]['cc'] as $student): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
-                                    <?php foreach ($student as $column => $value): ?>
-                                        <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                            <td><?php echo htmlspecialchars($value ?? ''); ?></td>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </table>
+                        <?php endforeach; ?>
+                    </table>
 
-                        <h2>Notes de TP des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
-                        <table>
+                    <h2>Notes de TP des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
+                    <table>
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <?php foreach (array_keys($notes[$classe]['tp'][0]) as $column): ?>
+                                <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
+                                    <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php foreach ($notes[$classe]['tp'] as $student): ?>
                             <tr>
-                                <th>Matricule</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <?php foreach (array_keys($notes[$classe]['tp'][0]) as $column): ?>
+                                <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
+                                <?php foreach ($student as $column => $value): ?>
                                     <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                        <th><?php echo htmlspecialchars(ucwords($column)); ?></th>
+                                        <td><?php echo htmlspecialchars($value ?? ''); ?></td>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </tr>
-                            <?php foreach ($notes[$classe]['tp'] as $student): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars($student['prenom'] ?? ''); ?></td>
-                                    <?php foreach ($student as $column => $value): ?>
-                                        <?php if (!in_array($column, ['id', 'matricule', 'nom', 'prenom'])): ?>
-                                            <td><?php echo htmlspecialchars($value ?? ''); ?></td>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </table>
-                    </div>
+                        <?php endforeach; ?>
+                    </table>
                 </div>
             <?php else: ?>
                 <p>Aucune note disponible pour la classe <?php echo htmlspecialchars($classe); ?>.</p>
             <?php endif; ?>
         <?php endforeach; ?>
+    </div>
 
-    </main>
+    <!-- Popup -->
+    <div id="popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h3>Confirmation</h3>
+            <p>Êtes-vous sûr de vouloir supprimer cet étudiant ?</p>
+            <div class="popup-actions">
+                <button class="cancel" onclick="closePopup()">Annuler</button>
+                <button class="confirm" id="confirm-delete">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPopup(deleteId) {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'flex';
+            const confirmButton = document.getElementById('confirm-delete');
+            confirmButton.onclick = function() {
+                location.href = '?delete_id=' + deleteId;
+            };
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
 </body>
 
 </html>
- 

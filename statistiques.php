@@ -83,8 +83,19 @@ $mysqli->close();
     <title>Statistiques</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        :root {
+            --primary-color: #343a40;
+            --secondary-color: #495057;
+            --background-color: #343a40;
+            --text-color: #ffffff;
+            --white: #ffffff;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Times New Roman', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #343a40;
@@ -180,11 +191,10 @@ $mysqli->close();
             gap: 20px;
             margin-bottom: 30px;
             padding: 0 20px;
-            
         }
 
-        .stat-card {
-            background: #495057;
+        .stat-card1 {
+            background: var(--info-color);
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -195,23 +205,55 @@ $mysqli->close();
             transition: transform 0.3s ease;
         }
 
-        .stat-card:hover {
+        .stat-card2 {
+            background: var(--success-color);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card3 {
+            background: var(--warning-color);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card1:hover,
+        .stat-card2:hover,
+        .stat-card3:hover {
             transform: translateY(-5px);
         }
 
-        .stat-card i {
+        .stat-card1 i,
+        .stat-card2 i,
+        .stat-card3 i {
             font-size: 2.5em;
-            color: #6c83f7;
+            color: white;
             margin-bottom: 10px;
         }
 
-        .stat-card h3 {
+        .stat-card1 h3,
+        .stat-card2 h3,
+        .stat-card3 h3 {
             color: white;
             font-size: 1.8em;
             margin: 10px 0;
         }
 
-        .stat-card p {
+        .stat-card1 p,
+        .stat-card2 p,
+        .stat-card3 p {
             color: white;
             font-size: 1em;
             margin: 0;
@@ -320,22 +362,22 @@ $mysqli->close();
 
         <!-- Stats Cards -->
         <div class="stats-cards">
-            <div class="stat-card">
+            <div class="stat-card1">
                 <i class='bx bxs-user-detail'></i>
                 <h3><?php echo number_format($totalStudents, 0, ',', ' '); ?></h3>
-                <p>Étudiants inscrits</p>
+                <p id="stat-card1-text"></p> <!-- Texte à afficher lettre par lettre -->
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card2">
                 <i class='bx bx-euro'></i>
                 <h3><?php echo number_format($totalPayments, 0, ',', ' '); ?> €</h3>
-                <p>Montant total versé</p>
+                <p id="stat-card2-text"></p> <!-- Texte à afficher lettre par lettre -->
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card3">
                 <i class='bx bx-error-circle'></i>
                 <h3><?php echo number_format($insolventStudents, 0, ',', ' '); ?></h3>
-                <p>Étudiants insolvables</p>
+                <p id="stat-card3-text"></p> <!-- Texte à afficher lettre par lettre -->
             </div>
         </div>
 
@@ -354,7 +396,31 @@ $mysqli->close();
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Données PHP vers JavaScript
+        // Fonction pour afficher le texte lettre par lettre
+        function typeWriter(elementId, text, speed = 50) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = ""; // Effacer le texte initial
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+
+            type();
+        }
+
+        // Appeler la fonction lorsque la page est chargée
+        document.addEventListener("DOMContentLoaded", function() {
+            typeWriter("stat-card1-text", "Étudiants inscrits");
+            typeWriter("stat-card2-text", "Montant total versé");
+            typeWriter("stat-card3-text", "Étudiants insolvables");
+        });
+
+        // Le reste de votre code JavaScript pour les graphiques...
         const studentStatusLabels = <?php echo json_encode($statuts); ?>;
         const studentStatusData = <?php echo json_encode($counts); ?>;
         const paymentDaysLabels = <?php echo json_encode($days); ?>;
@@ -362,7 +428,6 @@ $mysqli->close();
         const paymentMonthsLabels = <?php echo json_encode($months); ?>;
         const paymentMonthlyTotalsData = <?php echo json_encode($monthlyTotals); ?>;
 
-        // Configuration des couleurs
         const colors = {
             pie: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
             bar1: {
@@ -375,7 +440,6 @@ $mysqli->close();
             }
         };
 
-        // Configuration commune pour les graphiques
         const commonOptions = {
             color: 'white',
             responsive: true,
@@ -402,13 +466,11 @@ $mysqli->close();
                     },
                     padding: {
                         bottom: 30
-                        
                     }
                 }
             }
         };
 
-        // Fonction pour formater les montants
         const formatMoney = (value) => {
             return new Intl.NumberFormat('fr-FR', {
                 style: 'currency',
@@ -418,7 +480,6 @@ $mysqli->close();
             }).format(value);
         };
 
-        // Graphique circulaire - Étudiants par statut
         new Chart(document.getElementById('studentsByStatusChart').getContext('2d'), {
             type: 'pie',
             data: {
@@ -441,7 +502,6 @@ $mysqli->close();
             }
         });
 
-        // Graphique en barres - Versements par jour
         new Chart(document.getElementById('paymentsByDayChart').getContext('2d'), {
             type: 'bar',
             data: {
@@ -481,7 +541,6 @@ $mysqli->close();
             }
         });
 
-        // Graphique en barres - Versements par mois
         new Chart(document.getElementById('paymentsByMonthChart').getContext('2d'), {
             type: 'bar',
             data: {

@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Ajout de l'étudiant et envoi du matricule par email
-        $success = $etudiant->ajouterEtudiant() && $etudiant->ajouterEtudiantCon();
+        $success = $etudiant->ajouterEtudiant() && $etudiant->ajouterEtudiantCon("Etudiant",$matricule,$matricule);
         if ($success) {
             $repond = $etudiant->envoyerMatriculeParEmail($matricule, $email, $nom);
             $message = $repond

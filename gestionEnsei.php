@@ -33,82 +33,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
     <title>Liste des Enseignants</title>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-        }
-
-        .popup-content h3 {
-            margin: 0 0 10px;
-        }
-
-        .popup-content p {
-            margin: 0 0 20px;
-        }
-
-        .popup-actions button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-
-        .popup-actions .close {
-            background: #2196F3;
-            color: #fff;
-        }
-
-        .popup-actions .close:hover {
-            background: #1976D2;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: black;
-            color: #333;
-        }
-
-        /* Sidebar */
+        /* Styles de la sidebar */
         .sidebar {
             background-color: #343a40;
             color: white;
-            height: 93vh;
-            position: fixed;
-            width: 175px;
+            height: 100vh;
+            width: 200px;
             padding: 20px;
-            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 0 10px 10px 0;
         }
 
         .sidebar h2 {
-            text-decoration: none;
-            color: white;
+            margin: 0 0 30px 0;
+            font-size: 1.5em;
+            text-align: center;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
+            justify-content: center;
+            gap: 10px;
         }
 
         .sidebar a {
@@ -116,36 +68,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             color: white;
             display: flex;
             align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar a i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .sidebar a:hover {
-            background-color: #495057;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
-        }
-
-        .sidebar a img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+            background-color: #6c83f7;
+            transform: translateX(5px);
         }
 
         .sidebar .etu {
-            background-color: #495057;
+            background-color: #6c83f7;
         }
 
-        /* Content */
+        .logout-btn {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Styles du contenu principal */
         .content {
             margin-left: 220px;
-            margin-right: 20px;
             padding: 20px;
             background-color: #343a40;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: white;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
         }
 
         .header {
@@ -156,31 +123,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             justify-content: space-between;
             align-items: center;
             border-radius: 10px;
-        }
-
-        .header h2:hover {
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
+            margin-bottom: 20px;
         }
 
         .header h2 {
             margin-left: 10px;
-            justify-content: left;
             color: white;
         }
 
         .header input {
-            width: 300px;
-            padding: 15px;
+            width: 250px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-        }
-
-        .header input:hover {
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
         }
 
         .header input::placeholder {
@@ -191,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             background-color: #007bff;
             color: white;
             margin: 5px;
-            padding: 9px 12px;
+            padding: 8px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -199,17 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
 
         .header button:hover {
             background-color: #0056b3;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            background-color: #495057;
-            border-radius: 10px;
         }
 
         .table-container {
@@ -218,11 +162,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
 
         th,
         td {
-            padding: 8px;
+            padding: 12px;
             border: 1px solid #2c3e50;
             text-align: left;
             color: wheat;
@@ -231,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         th {
             background-color: #2c3e50;
             color: white;
+            font-weight: bold;
         }
 
         tr:nth-child(even) {
@@ -238,40 +190,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         }
 
         tr:hover {
-            background-color: #495057;
-        }
-
-        h1 {
-            text-align: center;
-            color: #007bff;
-        }
-
-        img {
-            max-width: 50px;
-            max-height: 50px;
-            object-fit: cover;
-            border-radius: 50px;
-            width: 100%;
-        }
-
-        .rien {
-            max-width: 25px;
-            max-height: 25px;
-            justify-content: center;
+            background-color: #6c83f7;
+            transition: background-color 0.3s ease;
         }
 
         .actions button {
-            margin: .2px;
-            padding: 3px 6px;
+            margin: 4px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-        }
-
-        .actions button:hover {
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
+            transition: all 0.3s ease;
         }
 
         .actions .edit {
@@ -289,8 +218,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             color: white;
         }
 
-        .table-container a {
-            text-decoration: none;
+        .actions button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
         }
 
         .ajout {
@@ -304,22 +234,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             border-radius: 5px;
             cursor: pointer;
             justify-content: center;
-            position: relative;
             text-decoration: none;
         }
 
         .ajout:hover {
             background-color: #0056b3;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
-        }
-
-        .table-container .hover .ajout:hover {
-            background-color: #0056b3;
-            transform: translateY(-10%);
-            transition: ease-in-out .5s;
-            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
         }
 
         .popup-overlay {
@@ -379,25 +298,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         .popup-actions .confirm:hover {
             background: #218838;
         }
-
-        .haut {
-            padding: 10px;
-        }
-
-        .haut h2 {
-            text-decoration: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
     </style>
 </head>
 
 <body>
-
     <?php if (!empty($message)): ?>
         <div class="popup-overlay" id="popup">
             <div class="popup-content">
@@ -409,27 +313,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             </div>
         </div>
     <?php endif; ?>
+
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2><i class="fas fa-bars"></i> Menu</h2>
-        <a href="gestionEtu.php"><i class="fas fa-user-graduate"></i> Étudiants</a>
-        <a href="gestionVer.php"><i class="fas fa-money-bill-wave"></i> Versements</a>
-        <a class="etu" href="gestionEnsei.php"><i class="fas fa-chalkboard-teacher"></i> Enseignant</a>
-        <a href="statistiques.php"><i class="fas fa-chart-bar"></i> Statistiques</a>
-        <a href="gestionMati.php"><i class="fas fa-book"></i> Matieres</a>
-        <a href="rien1.php"><i class="fas fa-file-alt"></i> Notes</a>
-        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        <h2><i class='bx bxs-dashboard'></i> Menu</h2>
+        <a href="gestionEtu.php"><i class='bx bxs-user-detail'></i> Étudiants</a>
+        <a href="gestionVer.php"><i class='bx bx-money'></i> Versements</a>
+        <a class="etu" href="gestionEnsei.php"><i class='bx bxs-user-badge'></i> Enseignants</a>
+        <a href="statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
+        <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
+        <a href="emploi.php"><i class='bx bxs-calendar'></i> Emploi du temps</a>
+        <a href="rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
+        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
 
     <!-- Main Content -->
     <div class="content">
         <div class="header">
             <div class="haut">
-                <h2><i class="fas fa-list"></i> Liste des enseignants</h2>
+                <h2><i class='bx bxs-user-badge'></i> Liste des enseignants</h2>
             </div>
             <form method="GET" action="gestionEnsei.php">
                 <input name="search" type="text" placeholder="Rechercher..." value="<?= htmlspecialchars($search); ?>">
-                <button type="submit"><i class="fas fa-search"></i> Rechercher</button>
+                <button type="submit"><i class='bx bx-search'></i> Rechercher</button>
             </form>
         </div>
 
@@ -438,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         <?php endif; ?>
 
         <div class="table-container">
-            <a href="AjouterEnsei.php"><button class="ajout"><i class="fas fa-plus"></i> Ajouter un enseignant</button></a>
+            <a href="AjouterEnsei.php"><button class="ajout"><i class='bx bx-plus'></i> Ajouter un enseignant</button></a>
             <table>
                 <thead>
                     <tr>
@@ -463,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
                                 <td><?= htmlspecialchars($enseignant['prenom']); ?></td>
                                 <td>
                                     <?php if (!empty($enseignant['photo'])): ?>
-                                        <img src="<?= htmlspecialchars($enseignant['photo']); ?>" alt="Photo">
+                                        <img src="uploads/<?= htmlspecialchars($enseignant['photo']); ?>" alt="Photo">
                                     <?php else: ?>
                                         <span>Aucune photo</span>
                                     <?php endif; ?>
@@ -472,8 +378,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
                                 <td><?= htmlspecialchars($enseignant['fonction']); ?></td>
                                 <td><?= htmlspecialchars($enseignant['date_enregistrement']); ?></td>
                                 <td class="actions">
-                                    <button class="edit" onclick="location.href='edit.php?id=<?= $enseignant['id']; ?>'"><i class="fas fa-edit"></i></button>
-                                    <button class="delete" onclick="openPopup(<?= $enseignant['id']; ?>)"><i class="fas fa-trash"></i></button>
+                                    <button class="edit" onclick="location.href='edit.php?id=<?= $enseignant['id']; ?>'"><i class='bx bx-edit'></i></button>
+                                    <button class="delete" onclick="openPopup(<?= $enseignant['id']; ?>)"><i class='bx bx-trash'></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -486,6 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             </table>
         </div>
     </div>
+
     <!-- Popup -->
     <div id="popup" class="popup-overlay" style="display: none;">
         <div class="popup-content">

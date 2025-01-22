@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit();
                 }
             } elseif ($statut === 'Administration') {
-                header("Location: gestionEtu.php");
+                header("Location: statistiques.php");
                 exit();
             } elseif ($statut === 'Professeur') {
                 if ($matricule === $password) {
