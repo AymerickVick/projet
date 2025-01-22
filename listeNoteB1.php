@@ -107,11 +107,11 @@ function calculateAverage($notes)
             font-family: Arial, sans-serif;
             display: flex;
             min-height: 100vh;
-            background-color: #f4f4f9;
+            background-color: #343a40;
         }
 
         .sidebar {
-            background-color: #475be8;
+            background-color: #343a40;
             color: white;
             width: 160px;
             padding: 20px 10px;
@@ -139,8 +139,9 @@ function calculateAverage($notes)
         }
 
         .sidebar a:hover {
-            background-color: #6c83f7;
-            transform: scale(1.05);
+            background-color: #495057;
+            transform: translateY(-10%);
+            transition: ease-in-out .5s;
             box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
         }
 
@@ -151,7 +152,7 @@ function calculateAverage($notes)
         }
 
         .sidebar .etu {
-            background-color: #6c83f7;
+            background-color: #495057;
         }
 
         .main-content {
@@ -160,6 +161,9 @@ function calculateAverage($notes)
             padding: 20px;
             width: calc(100% - 180px);
             text-align: center;
+            background-color: #343a40;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .table-card {
@@ -167,11 +171,11 @@ function calculateAverage($notes)
         }
 
         .table-card h2 {
-            color: #4a4a4a;
+            color: #ffffff;
         }
 
         .send-notes-button {
-            background-color: #4a90e2;
+            background-color: #007bff;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -181,7 +185,10 @@ function calculateAverage($notes)
         }
 
         .send-notes-button:hover {
-            background-color: #357abd;
+            background-color: #0056b3;
+            transform: translateY(-10%);
+            transition: ease-in-out .5s;
+            box-shadow: 0 5px 15px rgba(102, 166, 255, 0.5);
         }
 
         table {
@@ -189,23 +196,26 @@ function calculateAverage($notes)
             border-collapse: collapse;
             margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #495057;
+            border-radius: 10px;
         }
 
         th,
         td {
             padding: 10px;
             text-align: center;
-            border: 1px solid #ddd;
+            border: 1px solid #2c3e50;
+            color: wheat;
         }
 
         th {
-            background-color: #66a6ff;
-            color: #fff;
+            background-color: #2c3e50;
+            color: white;
         }
 
         .table-container {
             margin-top: 20px;
-            background-color: white;
+            background-color: #495057;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -295,7 +305,7 @@ function calculateAverage($notes)
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </tr>
-                            <?php foreach ($notes[$classe]['cc'] as $student): ?>
+                            <?php foreach ($notes[$classe]['tp'] as $student): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($student['matricule'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($student['nom'] ?? ''); ?></td>
@@ -319,3 +329,4 @@ function calculateAverage($notes)
 </body>
 
 </html>
+ 

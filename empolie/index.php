@@ -1,89 +1,58 @@
 <?php
-require_once 'Class/Database.php';
-require_once 'Class/Enseignant.php';
+require 'EmploiDuTemps.php';
 
-$database = new Database();
-$db = $database->getConnection();
-$enseignant = new Enseignant($db);
+$dsn = 'mysql:host=localhost;dbname=gestion_emploi_du_temps';
+$dsn1 = 'mysql:host=localhost;dbname=etudiants';
+$username = 'root';
+$password = 'Keyce-2024';
 
-// Recherche
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$enseignants = $enseignant->getAllEtudiants($search);
+try {
+    $db = new PDO($dsn, $username, $password);
+    $db1 = new PDO($dsn1, $username, $password);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Suppression
-$message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
-    $id = intval($_GET['delete_id']);
-    if ($enseignant->supprimerEnseignant($id)) {
-        $message = "L'enseignant a été supprimé avec succès.";
-        header("Location: gestionEnsei.php");
-        exit();
-    } else {
-        $message = "Une erreur s'est produite lors de la suppression.";
+    $emploiDuTemps = new EmploiDuTemps($db,$db1);
+    $cours = $emploiDuTemps->obtenirCours(strtoupper($_GET['niveau']));
+
+    $coursParJour = [
+        'lundi_matin' => '',
+        'mardi_matin' => '',
+        'mercredi_matin' => '',
+        'jeudi_matin' => '',
+        'vendredi_matin' => '',
+        'samedi_matin' => '',
+        'lundi_soir' => '',
+        'mardi_soir' => '',
+        'mercredi_soir' => '',
+        'jeudi_soir' => '',
+        'vendredi_soir' => '',
+        'samedi_soir' => ''
+    ];
+
+    foreach ($cours as $c) {
+        $coursParJour[$c['jour'] . '_' . $c['horaire']] = $c['cours'];
     }
+
+    $niveau = $_GET['niveau'];
+
+    // Récupérer les matières de niveau B1
+    $stmt = $db1->prepare("SELECT nom_matiere FROM matieres WHERE niveau_matiere = 'B3'");
+    $stmt->execute();
+    $matieres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo 'Erreur de connexion : ' . $e->getMessage();
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Enseignants</title>
+    <title>Gestion des Emplois du Temps</title>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-        }
-
-        .popup-content h3 {
-            margin: 0 0 10px;
-        }
-
-        .popup-content p {
-            margin: 0 0 20px;
-        }
-
-        .popup-actions button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-
-        .popup-actions .close {
-            background: #2196F3;
-            color: #fff;
-        }
-
-        .popup-actions .close:hover {
-            background: #1976D2;
-        }
-
         body {
             font-family: 'Arial', sans-serif;
             background-color: black;
@@ -222,7 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
 
         th,
         td {
-            padding: 8px;
+            padding: 24px;
+            /* Augmenter le padding pour rendre les lignes plus grandes */
             border: 1px solid #2c3e50;
             text-align: left;
             color: wheat;
@@ -231,6 +201,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         th {
             background-color: #2c3e50;
             color: white;
+            height: 72px;
+            /* Augmenter la hauteur des en-têtes pour correspondre aux lignes */
         }
 
         tr:nth-child(even) {
@@ -393,28 +365,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             padding: 10px;
             border-radius: 5px;
         }
+
+        /* Style for TPE cells */
+        .tpe {
+            background-color: green;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
-
-    <?php if (!empty($message)): ?>
-        <div class="popup-overlay" id="popup">
-            <div class="popup-content">
-                <h3>Message</h3>
-                <p><?= htmlspecialchars($message); ?></p>
-                <div class="popup-actions">
-                    <button class="close" onclick="closePopup()">Fermer</button>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
     <!-- Sidebar -->
     <div class="sidebar">
         <h2><i class="fas fa-bars"></i> Menu</h2>
-        <a href="gestionEtu.php"><i class="fas fa-user-graduate"></i> Étudiants</a>
+        <a class="etu" href="gestionEtu.php"><i class="fas fa-user-graduate"></i> Étudiants</a>
         <a href="gestionVer.php"><i class="fas fa-money-bill-wave"></i> Versements</a>
-        <a class="etu" href="gestionEnsei.php"><i class="fas fa-chalkboard-teacher"></i> Enseignant</a>
+        <a href="gestionEnsei.php"><i class="fas fa-chalkboard-teacher"></i> Enseignant</a>
         <a href="statistiques.php"><i class="fas fa-chart-bar"></i> Statistiques</a>
         <a href="gestionMati.php"><i class="fas fa-book"></i> Matieres</a>
         <a href="rien1.php"><i class="fas fa-file-alt"></i> Notes</a>
@@ -425,72 +391,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
     <div class="content">
         <div class="header">
             <div class="haut">
-                <h2><i class="fas fa-list"></i> Liste des enseignants</h2>
+                <h2><i class="fas fa-list"></i> Gestion des Emplois du Temps</h2>
             </div>
-            <form method="GET" action="gestionEnsei.php">
-                <input name="search" type="text" placeholder="Rechercher..." value="<?= htmlspecialchars($search); ?>">
-                <button type="submit"><i class="fas fa-search"></i> Rechercher</button>
-            </form>
         </div>
 
-        <?php if (!empty($message)): ?>
-            <p style="color: green;"> <?= htmlspecialchars($message); ?> </p>
-        <?php endif; ?>
-
         <div class="table-container">
-            <a href="AjouterEnsei.php"><button class="ajout"><i class="fas fa-plus"></i> Ajouter un enseignant</button></a>
+            <a href="ajouterEMP.php?niveau=<?php echo htmlspecialchars($_GET['niveau']); ?>">
+                <button class="ajout">
+                    <i class="fas fa-plus"></i> Ajouter un cours
+                </button>
+            </a>
+
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Matricule</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Photo</th>
-                        <th>Email</th>
-                        <th>Fonction</th>
-                        <th>Date d'enregistrement</th>
-                        <th>Actions</th>
+                        <th>Horaire</th>
+                        <th>Lundi</th>
+                        <th>Mardi</th>
+                        <th>Mercredi</th>
+                        <th>Jeudi</th>
+                        <th>Vendredi</th>
+                        <th>Samedi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($enseignants)): ?>
-                        <?php foreach ($enseignants as $enseignant): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($enseignant['id']); ?></td>
-                                <td><?= htmlspecialchars($enseignant['matricule']); ?></td>
-                                <td><?= htmlspecialchars($enseignant['nom']); ?></td>
-                                <td><?= htmlspecialchars($enseignant['prenom']); ?></td>
-                                <td>
-                                    <?php if (!empty($enseignant['photo'])): ?>
-                                        <img src="<?= htmlspecialchars($enseignant['photo']); ?>" alt="Photo">
-                                    <?php else: ?>
-                                        <span>Aucune photo</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= htmlspecialchars($enseignant['email']); ?></td>
-                                <td><?= htmlspecialchars($enseignant['fonction']); ?></td>
-                                <td><?= htmlspecialchars($enseignant['date_enregistrement']); ?></td>
-                                <td class="actions">
-                                    <button class="edit" onclick="location.href='edit.php?id=<?= $enseignant['id']; ?>'"><i class="fas fa-edit"></i></button>
-                                    <button class="delete" onclick="openPopup(<?= $enseignant['id']; ?>)"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="9">Aucun enseignant trouvé.</td>
-                        </tr>
-                    <?php endif; ?>
+                    <tr>
+                        <td>08 h 30 - 12 h 30</td>
+                        <td class="<?php echo $coursParJour['lundi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['lundi_matin']; ?></td>
+                        <td class="<?php echo $coursParJour['mardi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['mardi_matin']; ?></td>
+                        <td class="<?php echo $coursParJour['mercredi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['mercredi_matin']; ?></td>
+                        <td class="<?php echo $coursParJour['jeudi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['jeudi_matin']; ?></td>
+                        <td class="<?php echo $coursParJour['vendredi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['vendredi_matin']; ?></td>
+                        <td class="<?php echo $coursParJour['samedi_matin'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['samedi_matin']; ?></td>
+                    </tr>
+                    <tr>
+                        <td>13 h 30 - 17 h 30</td>
+                        <td class="<?php echo $coursParJour['lundi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['lundi_soir']; ?></td>
+                        <td class="<?php echo $coursParJour['mardi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['mardi_soir']; ?></td>
+                        <td class="<?php echo $coursParJour['mercredi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['mercredi_soir']; ?></td>
+                        <td class="<?php echo $coursParJour['jeudi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['jeudi_soir']; ?></td>
+                        <td class="<?php echo $coursParJour['vendredi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['vendredi_soir']; ?></td>
+                        <td class="<?php echo $coursParJour['samedi_soir'] === 'TPE' ? 'tpe' : ''; ?>"><?php echo $coursParJour['samedi_soir']; ?></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
     <!-- Popup -->
     <div id="popup" class="popup-overlay" style="display: none;">
         <div class="popup-content">
             <h3>Confirmation</h3>
-            <p>Êtes-vous sûr de vouloir supprimer cet enseignant ?</p>
+            <p>Êtes-vous sûr de vouloir supprimer cet étudiant ?</p>
             <div class="popup-actions">
                 <button class="cancel" onclick="closePopup()">Annuler</button>
                 <button class="confirm" id="confirm-delete">Confirmer</button>

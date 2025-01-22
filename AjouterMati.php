@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nom_matiere = htmlspecialchars(trim($_POST['nom_matiere']));
         $nom_matiere = str_replace(' ', '_', $nom_matiere);
         $niveau_matiere = htmlspecialchars(trim($_POST['niveau_matiere']));
+        $nombre_seance = htmlspecialchars(trim($_POST['nombre_seance']));
 
         if (empty($nom_prof) || empty($matricule_prof) || empty($nom_matiere) || empty($niveau_matiere)) {
             throw new Exception("Tous les champs sont obligatoires.");
@@ -38,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $matiere->nom_prof = $nom_prof;
         $matiere->nom_matiere = $nom_matiere;
         $matiere->niveau_matiere = $niveau_matiere;
+        $matiere->nombre_seance = $nombre_seance;
 
         // Ajout dans la base de données
         // if ($matiere->ajouterMatiere()) {
@@ -260,6 +262,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="nom_matiere">Nom de la Matière :</label>
                 <input type="text" id="nom_matiere" name="nom_matiere" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre_seance">Nombre de Seances :</label>
+                <input type="number" id="nombre_seance" name="nombre_seance" required>
             </div>
 
             <div class="form-group">

@@ -17,6 +17,7 @@ class Matiere
     public $nom_matiere;
     public $matricule_prof;
     public $niveau_matiere;
+    public $nombre_seance;
 
     // Constructeur : initialise la connexion à la base de données
     public function __construct($db)
@@ -28,8 +29,8 @@ class Matiere
     public function ajouterMatiere()
     {
         $query = "INSERT INTO " . $this->table . " 
-                  (matricule_prof,nom_prof, nom_matiere, niveau_matiere) 
-                  VALUES (?, ?, ?, ?)";
+                  (matricule_prof,nom_prof, nom_matiere, niveau_matiere,nombre_seance) 
+                  VALUES (?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -40,11 +41,12 @@ class Matiere
 
         // Liaison des paramètres
         $stmt->bind_param(
-            "ssss",
+            "ssssi",
             $this->matricule_prof,
             $this->nom_prof,
             $this->nom_matiere,
             $this->niveau_matiere,
+            $this->nombre_seance,
 
 
         );

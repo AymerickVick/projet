@@ -304,7 +304,7 @@ class GradeProcessor
     $pdf_path = $releves_dir . "/releve_{$student['matricule']}.pdf";
     $pdf->Output($pdf_path, 'F');
     
-    return [$pdf_path, $signature];
+    return [$pdf_path];
 }
 
 // Méthode auxiliaire pour la signature

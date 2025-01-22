@@ -417,6 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         <a class="etu" href="gestionEtu.php"><i class="fas fa-user-graduate"></i> Étudiants</a>
         <a href="gestionVer.php"><i class="fas fa-money-bill-wave"></i> Versements</a>
         <a href="gestionEnsei.php"><i class="fas fa-chalkboard-teacher"></i> Enseignant</a>
+        <a href="emploi.php"><i class="fas fa-chalkboard-teacher"></i> Emploie</a>
         <a href="statistiques.php"><i class="fas fa-chart-bar"></i> Statistiques</a>
         <a href="gestionMati.php"><i class="fas fa-book"></i> Matieres</a>
         <a href="rien1.php"><i class="fas fa-file-alt"></i> Notes</a>
