@@ -390,7 +390,7 @@ function calculateAverage($notes)
             <?php if (isset($notes[$classe]) && !empty($notes[$classe])): ?>
                 <div class="table-container">
                     <h2>Notes des étudiants de la classe <?php echo htmlspecialchars($classe); ?></h2>
-                    <button class="ajout" onclick="window.location.href='envoyer.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
+                    <button class="ajout" onclick="window.location.href='envoyer_note.php?classe=<?php echo urlencode($classe); ?>'">Envoyer les notes</button>
                     <table>
                         <tr>
                             <th>Matricule</th>
