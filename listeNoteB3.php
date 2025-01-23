@@ -381,7 +381,7 @@ function calculateAverage($notes)
         <a href="statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
         <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
         <a class="etu" href="rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
-        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
+        <a href="index.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
 
     <!-- Main Content -->

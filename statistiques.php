@@ -351,7 +351,7 @@ $mysqli->close();
             <i class='bx bxs-notepad'></i>
             Notes
         </a>
-        <a href="logout.php" class="logout-btn">
+        <a href="index.php" class="logout-btn">
             <i class='bx bx-log-out'></i>
             Déconnexion
         </a>

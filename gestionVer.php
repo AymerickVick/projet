@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
         <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
         <a href="emploi.php"><i class='bx bxs-calendar'></i> Emploi du temps</a>
         <a href="rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
-        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
+        <a href="index.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
 
     <!-- Main Content -->

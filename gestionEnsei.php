@@ -75,6 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
             font-weight: 500;
         }
 
+        img {
+            width: 1cm; /* Diamètre de 4 cm */
+            height: 1cm; /* Diamètre de 4 cm */
+            border-radius: 50%; /* Rendre l'image ronde */
+            object-fit: cover; /* Assure que l'image couvre toute la zone sans déformation */
+            display: block; /* Centrer l'image */
+            margin: auto; /* Centrer l'image */
+        }
+
         .sidebar a i {
             font-size: 1.2rem;
             margin-right: 12px;
@@ -369,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete_id'])) {
                                 <td><?= htmlspecialchars($enseignant['prenom']); ?></td>
                                 <td>
                                     <?php if (!empty($enseignant['photo'])): ?>
-                                        <img src="uploads/<?= htmlspecialchars($enseignant['photo']); ?>" alt="Photo">
+                                        <img src="<?= htmlspecialchars($enseignant['photo']); ?>" alt="Photo">
                                     <?php else: ?>
                                         <span>Aucune photo</span>
                                     <?php endif; ?>

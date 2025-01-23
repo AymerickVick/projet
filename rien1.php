@@ -428,8 +428,9 @@ $conn->close();
         <a href="gestionEnsei.php"><i class='bx bxs-user-badge'></i> Enseignants</a>
         <a href="statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
         <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
-        <a href="rien1.php" class="active"><i class='bx bxs-notepad'></i> Notes</a>
-        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
+        <a href="emploi.php"><i class='bx bxs-calendar'></i> Emploi du temps</a>
+        <a href="rien1.php" class="etu"><i class='bx bxs-notepad'></i> Notes</a>
+        <a href="index.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
 
     <!-- Main Content -->

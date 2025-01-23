@@ -368,14 +368,14 @@ try {
     <!-- Sidebar -->
     <div class="sidebar">
         <h2><i class='bx bxs-dashboard'></i> Menu</h2>
-        <a class="etu" href="gestionEtu.php"><i class='bx bxs-user-detail'></i> Étudiants</a>
-        <a href="gestionVer.php"><i class='bx bx-money'></i> Versements</a>
-        <a href="gestionEnsei.php"><i class='bx bxs-user-badge'></i> Enseignants</a>
-        <a href="statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
-        <a href="gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
-        <a href="emploi.php"><i class='bx bxs-calendar'></i> Emploi du temps</a>
-        <a href="rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
-        <a href="logout.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
+        <a href="../gestionEtu.php"><i class='bx bxs-user-detail'></i> Étudiants</a>
+        <a href="../gestionVer.php"><i class='bx bx-money'></i> Versements</a>
+        <a href="../gestionEnsei.php"><i class='bx bxs-user-badge'></i> Enseignants</a>
+        <a href="../statistiques.php"><i class='bx bx-bar-chart-alt-2'></i> Statistiques</a>
+        <a href="../gestionMati.php"><i class='bx bxs-book'></i> Matières</a>
+        <a href="../emploi.php" class="etu"><i class='bx bxs-calendar'></i> Emploi du temps</a>
+        <a href="../rien1.php"><i class='bx bxs-notepad'></i> Notes</a>
+        <a href="../index.php" class="logout-btn"><i class='bx bx-log-out'></i> Déconnexion</a>
     </div>
 
     <!-- Main Content -->
