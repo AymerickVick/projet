@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
 <body>
 
     <div class="sidebar">
-        <h2><i class="fas fa-bars"></i> Menu</h2>
+        <h2><i class="fas fa-bars"></i> Menu </h2>
         <?php if (!empty($matricule)): ?>
             <a href="informationEtudiant.php?matricule=<?= htmlspecialchars($matricule); ?>"><i class="fas fa-user"></i> Mes Informations</a>
         <?php endif; ?>
